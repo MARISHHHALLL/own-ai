@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Accounts {
+  id String @unique
+  email String
+  isAdmin Boolean @default(false)
+}
+
+
+model User {
+  id String @unique
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages Messages[]
+  message_recipient MessageRecipient[]
+}
+model ChatLog {
+  id String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model Messages {
+  id String @unique
+  userId String
+  text String
+  sender User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message MessageRecipient[]
+}
+model MessageRecipient {
+  id String @unique
+  recipient_id String
+  message_id String
+  recipient User @relation(fields: [recipient_id], references: [id])  
+  message Messages @relation(fields: [message_id],references: [id])
+}
